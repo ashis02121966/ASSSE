@@ -1,19 +1,54 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Search, Filter, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Filter, Eye, X, Save } from 'lucide-react';
+import { userRoles } from '../../data/mockData';
 
 const UserManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
-
-  const users = [
+  const [users, setUsers] = useState([
     { id: '1', name: 'John Doe', email: 'john@ensd.gov.in', role: 'EnSD Admin', status: 'Active', lastLogin: '2024-01-15' },
     { id: '2', name: 'Jane Smith', email: 'jane@ensd.gov.in', role: 'CPG User', status: 'Active', lastLogin: '2024-01-14' },
     { id: '3', name: 'Mike Johnson', email: 'mike@ensd.gov.in', role: 'DS User', status: 'Inactive', lastLogin: '2024-01-10' },
     { id: '4', name: 'Sarah Wilson', email: 'sarah@ensd.gov.in', role: 'RO User', status: 'Active', lastLogin: '2024-01-15' },
-  ];
+  ]);
+  const [newUser, setNewUser] = useState({
+    name: '',
+    email: '',
+    role: '',
+    status: 'Active'
+  });
 
   const roles = ['EnSD Admin', 'CPG User', 'DS User', 'RO User', 'SSO User', 'Enterprise User'];
+
+  const handleAddUser = () => {
+    if (!newUser.name || !newUser.email || !newUser.role) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    const userId = `user-${Date.now()}`;
+    const userWithId = {
+      ...newUser,
+      id: userId,
+      lastLogin: new Date().toISOString().split('T')[0]
+    };
+    
+    setUsers([...users, userWithId]);
+    setNewUser({
+      name: '',
+      email: '',
+      role: '',
+      status: 'Active'
+    });
+    setShowAddModal(false);
+  };
+
+  const handleDeleteUser = (id: string) => {
+    if (confirm('Are you sure you want to delete this user?')) {
+      setUsers(users.filter(user => user.id !== id));
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     return status === 'Active' ? (
@@ -123,7 +158,10 @@ const UserManagement: React.FC = () => {
                       <button className="text-green-600 hover:text-green-800 p-1 rounded">
                         <Edit size={16} />
                       </button>
-                      <button className="text-red-600 hover:text-red-800 p-1 rounded">
+                      <button 
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="text-red-600 hover:text-red-800 p-1 rounded"
+                      >
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -134,6 +172,100 @@ const UserManagement: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Add User Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Add New User</h3>
+              <button 
+                onClick={() => setShowAddModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  value={newUser.name}
+                  onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter full name"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter email address"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Role *
+                </label>
+                <select
+                  value={newUser.role}
+                  onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select a role</option>
+                  {roles.map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  value={newUser.status}
+                  onChange={(e) => setNewUser({...newUser, status: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddUser}
+                disabled={!newUser.name || !newUser.email || !newUser.role}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                <Save size={16} />
+                <span>Add User</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
