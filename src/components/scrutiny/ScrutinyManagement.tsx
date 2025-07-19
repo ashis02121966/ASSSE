@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Filter, Eye, MessageSquare, CheckCircle, AlertCircle, Clock, FileText, Send } from 'lucide-react';
+import { surveyBlocks as allSurveyBlocks } from '../../data/surveyBlocks';
 
 interface ScrutinySurvey {
   id: string;
@@ -50,6 +51,7 @@ const ScrutinyManagement: React.FC = () => {
   const [comments, setComments] = useState<ScrutinyComment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [selectedFieldForComment, setSelectedFieldForComment] = useState<string | null>(null);
+  const [surveyResponses, setSurveyResponses] = useState<{[key: string]: any}>({});
 
   // Mock scrutiny surveys data with GSTN
   const scrutinySurveys: ScrutinySurvey[] = [
@@ -102,54 +104,39 @@ const ScrutinyManagement: React.FC = () => {
     }
   ];
 
-  // Mock survey blocks with GSTIN and DSL fields for scrutiny
-  const surveyBlocks: SurveyBlock[] = [
-    {
-      id: 'block-0',
-      name: 'Block 0: Identification of the Enterprise',
-      description: 'Enterprise identification details',
-      completed: true,
-      fields: [
-        { id: 'gstin', label: 'GSTIN', type: 'text', value: selectedSurvey?.gstn || '', required: true, readOnly: true },
-        { id: 'dsl_number', label: 'DSL Number', type: 'text', value: selectedSurvey?.dslNumber || '', required: true, readOnly: true },
-        { id: 'enterprise_name', label: 'Name of the Enterprise', type: 'text', value: selectedSurvey?.enterpriseName || '', required: true },
-        { id: 'enterprise_address', label: 'Address of the Enterprise', type: 'textarea', value: '123 Industrial Area, Manufacturing Zone, Mumbai - 400001', required: true },
-        { id: 'contact_person', label: 'Contact Person Name', type: 'text', value: 'Rajesh Kumar', required: true },
-        { id: 'contact_phone', label: 'Contact Phone', type: 'text', value: '+91-9876543210', required: true },
-        { id: 'contact_email', label: 'Contact Email', type: 'text', value: 'rajesh@abcmfg.com', required: false }
-      ]
-    },
-    {
-      id: 'block-1',
-      name: 'Block 1: Operational Particulars',
-      description: 'Details about the operational particulars of the enterprise',
-      completed: true,
-      fields: [
-        { id: 'gstin_ref', label: 'GSTIN (Reference)', type: 'text', value: selectedSurvey?.gstn || '', required: false, readOnly: true },
-        { id: 'dsl_ref', label: 'DSL Number (Reference)', type: 'text', value: selectedSurvey?.dslNumber || '', required: false, readOnly: true },
-        { id: 'sector', label: 'Sector', type: 'select', value: 'Manufacturing', required: true },
-        { id: 'type_of_organization', label: 'Type of Organization', type: 'select', value: 'Private Limited Company', required: true },
-        { id: 'registration_status', label: 'Registration Status', type: 'select', value: 'Registered', required: true },
-        { id: 'major_activity', label: 'Major Activity Code (NIC 2008)', type: 'text', value: '25111', required: true },
-        { id: 'accounting_period', label: 'Accounting Period', type: 'text', value: '04/2023 to 03/2024', required: true }
-      ]
-    },
-    {
-      id: 'block-2',
-      name: 'Block 2: Employment and Labour Cost',
-      description: 'Details of employment and labour cost during the accounting period',
-      completed: false,
-      fields: [
-        { id: 'gstin_emp', label: 'GSTIN (Reference)', type: 'text', value: selectedSurvey?.gstn || '', required: false, readOnly: true },
-        { id: 'dsl_emp', label: 'DSL Number (Reference)', type: 'text', value: selectedSurvey?.dslNumber || '', required: false, readOnly: true },
-        { id: 'total_employees', label: 'Total Number of Employees', type: 'number', value: '150', required: true },
-        { id: 'male_employees', label: 'Male Employees', type: 'number', value: '95', required: true },
-        { id: 'female_employees', label: 'Female Employees', type: 'number', value: '55', required: true },
-        { id: 'total_wages', label: 'Total Wages/Salaries (Rs.)', type: 'number', value: '12500000', required: true },
-        { id: 'working_days', label: 'Number of Working Days', type: 'number', value: '300', required: true }
-      ]
-    }
-  ];
+  // Get survey blocks with GSTIN and DSL fields populated and sample data for scrutiny
+  const getSurveyBlocks = (): SurveyBlock[] => {
+    // Sample data for scrutiny review
+    const sampleData: {[key: string]: any} = {
+      'enterprise_address_current': '123 Industrial Area, Manufacturing Zone, Mumbai - 400001',
+      'contact_person_name': 'Rajesh Kumar',
+      'contact_person_phone': '+91-9876543210',
+      'contact_email': 'rajesh@abcmfg.com',
+      'sector': '2', // Urban
+      'type_of_organization': '1', // Private Limited
+      'major_activity_code': '25111',
+      'accounting_period': '04/2023 to 03/2024',
+      'total_persons_worked': '150',
+      'total_wages_salaries': '12500000',
+      'working_days_enterprise': '300'
+    };
+
+    return allSurveyBlocks.map(block => ({
+      ...block,
+      fields: block.fields.map(field => ({
+        ...field,
+        value: field.id === 'gstin' || field.id.includes('gstin') ? selectedSurvey?.gstn || '' :
+               field.id === 'dsl_number' || field.id.includes('dsl') ? selectedSurvey?.dslNumber || '' :
+               field.id === 'enterprise_name_current' ? selectedSurvey?.enterpriseName || '' :
+               sampleData[field.id] || surveyResponses[field.id] || field.value || '',
+        readOnly: true // All fields are read-only in scrutiny mode
+      })),
+      gridData: block.gridData?.map(row => ({
+        ...row,
+        // Add sample data for grid rows if needed
+      }))
+    }));
+  };
 
   // Mock comments
   const mockComments: ScrutinyComment[] = [
@@ -201,6 +188,12 @@ const ScrutinyManagement: React.FC = () => {
     setCurrentBlock(0);
     setShowScrutinyForm(true);
     setComments(mockComments);
+    // Initialize survey responses with enterprise data
+    setSurveyResponses({
+      gstin: survey.gstn,
+      dsl_number: survey.dslNumber,
+      enterprise_name_current: survey.enterpriseName
+    });
   };
 
   const handleAddComment = (fieldId: string) => {
@@ -230,6 +223,7 @@ const ScrutinyManagement: React.FC = () => {
   };
 
   const handleNextBlock = () => {
+    const surveyBlocks = getSurveyBlocks();
     if (currentBlock < surveyBlocks.length - 1) {
       setCurrentBlock(currentBlock + 1);
     }
@@ -245,13 +239,16 @@ const ScrutinyManagement: React.FC = () => {
     alert('Survey approved and finalized!');
     setShowScrutinyForm(false);
     setSelectedSurvey(null);
+    setSurveyResponses({});
   };
 
   const getFieldComments = (fieldId: string) => {
+    const surveyBlocks = getSurveyBlocks();
     return comments.filter(c => c.fieldId === fieldId && c.blockId === surveyBlocks[currentBlock].id);
   };
 
   const renderScrutinyForm = () => {
+    const surveyBlocks = getSurveyBlocks();
     const block = surveyBlocks[currentBlock];
     
     return (
@@ -295,110 +292,180 @@ const ScrutinyManagement: React.FC = () => {
 
         {/* Scrutiny Form Fields */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {block.fields.map((field) => {
-              const fieldComments = getFieldComments(field.id);
-              return (
-                <div key={field.id} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      {field.label}
-                      {field.required && <span className="text-red-500 ml-1">*</span>}
-                      {field.readOnly && <span className="text-blue-500 ml-1">(Read-only)</span>}
-                    </label>
-                    <button
-                      onClick={() => setSelectedFieldForComment(field.id)}
-                      className="text-orange-600 hover:text-orange-800 p-1 rounded"
-                      title="Add Comment"
-                    >
-                      <MessageSquare size={16} />
-                    </button>
-                  </div>
-                  
-                  {field.type === 'textarea' ? (
-                    <textarea
-                      value={field.value}
-                      readOnly
-                      className={`w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 ${
-                        fieldComments.length > 0 ? 'border-orange-300 bg-orange-50' : ''
-                      }`}
-                      rows={3}
-                    />
-                  ) : field.type === 'select' ? (
-                    <select
-                      value={field.value}
-                      disabled
-                      className={`w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 ${
-                        fieldComments.length > 0 ? 'border-orange-300 bg-orange-50' : ''
-                      }`}
-                    >
-                      <option value={field.value}>{field.value}</option>
-                    </select>
-                  ) : (
-                    <input
-                      type={field.type}
-                      value={field.value}
-                      readOnly
-                      className={`w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 ${
-                        fieldComments.length > 0 ? 'border-orange-300 bg-orange-50' : ''
-                      }`}
-                    />
-                  )}
-                  
-                  {/* Field Comments */}
-                  {fieldComments.length > 0 && (
-                    <div className="mt-2 space-y-2">
-                      {fieldComments.map((comment) => (
-                        <div key={comment.id} className="bg-orange-50 border border-orange-200 rounded p-3">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <p className="text-sm text-orange-800">{comment.comment}</p>
-                              <p className="text-xs text-orange-600 mt-1">
-                                {comment.scrutinizer} • {comment.timestamp}
-                              </p>
-                            </div>
-                            {!comment.resolved && (
-                              <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
-                                Pending
-                              </span>
-                            )}
-                          </div>
-                        </div>
+          {block.isGrid ? (
+            <div className="overflow-x-auto">
+              <h4 className="font-medium text-gray-900 mb-4">Grid Data Review</h4>
+              <table className="w-full border border-gray-300">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {block.gridColumns?.map((column) => (
+                      <th key={column.id} className="px-4 py-2 border border-gray-300 text-left text-sm font-medium text-gray-700">
+                        {column.label}
+                        {column.required && <span className="text-red-500 ml-1">*</span>}
+                      </th>
+                    ))}
+                    <th className="px-4 py-2 border border-gray-300 text-left text-sm font-medium text-gray-700">
+                      Comments
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {block.gridData?.map((row, rowIndex) => (
+                    <tr key={rowIndex} className="hover:bg-gray-50">
+                      {block.gridColumns?.map((column) => (
+                        <td key={column.id} className="px-4 py-2 border border-gray-300">
+                          <div className="text-sm text-gray-900">{row[column.id] || '-'}</div>
+                        </td>
                       ))}
+                      <td className="px-4 py-2 border border-gray-300">
+                        <button
+                          onClick={() => setSelectedFieldForComment(`${block.id}_${rowIndex}`)}
+                          className="text-orange-600 hover:text-orange-800 p-1 rounded"
+                          title="Add Comment"
+                        >
+                          <MessageSquare size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {block.fields.map((field) => {
+                const fieldComments = getFieldComments(field.id);
+                return (
+                  <div key={field.id} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        {field.label}
+                        {field.required && <span className="text-red-500 ml-1">*</span>}
+                        {field.readOnly && <span className="text-blue-500 ml-1">(Read-only)</span>}
+                      </label>
+                      <button
+                        onClick={() => setSelectedFieldForComment(field.id)}
+                        className="text-orange-600 hover:text-orange-800 p-1 rounded"
+                        title="Add Comment"
+                      >
+                        <MessageSquare size={16} />
+                      </button>
                     </div>
-                  )}
-                  
-                  {/* Add Comment Form */}
-                  {selectedFieldForComment === field.id && (
-                    <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded">
+                    
+                    {field.type === 'textarea' ? (
                       <textarea
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Add your scrutiny comment..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        rows={2}
+                        value={field.value}
+                        readOnly
+                        className={`w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 ${
+                          fieldComments.length > 0 ? 'border-orange-300 bg-orange-50' : ''
+                        }`}
+                        rows={3}
                       />
-                      <div className="flex justify-end space-x-2 mt-2">
-                        <button
-                          onClick={() => setSelectedFieldForComment(null)}
-                          className="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={() => handleAddComment(field.id)}
-                          className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center space-x-1"
-                        >
-                          <Send size={14} />
-                          <span>Add Comment</span>
-                        </button>
+                    ) : field.type === 'select' ? (
+                      <select
+                        value={field.value}
+                        disabled
+                        className={`w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 ${
+                          fieldComments.length > 0 ? 'border-orange-300 bg-orange-50' : ''
+                        }`}
+                      >
+                        <option value={field.value}>{field.value}</option>
+                      </select>
+                    ) : (
+                      <input
+                        type={field.type}
+                        value={field.value}
+                        readOnly
+                        className={`w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 ${
+                          fieldComments.length > 0 ? 'border-orange-300 bg-orange-50' : ''
+                        }`}
+                      />
+                    )}
+                    
+                    {/* Field Comments */}
+                    {fieldComments.length > 0 && (
+                      <div className="mt-2 space-y-2">
+                        {fieldComments.map((comment) => (
+                          <div key={comment.id} className="bg-orange-50 border border-orange-200 rounded p-3">
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <p className="text-sm text-orange-800">{comment.comment}</p>
+                                <p className="text-xs text-orange-600 mt-1">
+                                  {comment.scrutinizer} • {comment.timestamp}
+                                </p>
+                              </div>
+                              {!comment.resolved && (
+                                <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
+                                  Pending
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                    )}
+                    
+                    {/* Add Comment Form */}
+                    {selectedFieldForComment === field.id && (
+                      <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded">
+                        <textarea
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          placeholder="Add your scrutiny comment..."
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          rows={2}
+                        />
+                        <div className="flex justify-end space-x-2 mt-2">
+                          <button
+                            onClick={() => setSelectedFieldForComment(null)}
+                            className="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => handleAddComment(field.id)}
+                            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center space-x-1"
+                          >
+                            <Send size={14} />
+                            <span>Add Comment</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Add Comment Form for Grid */}
+          {selectedFieldForComment?.includes('_') && selectedFieldForComment.startsWith(block.id) && (
+            <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded">
+              <h5 className="font-medium text-gray-900 mb-2">Add Comment for Row</h5>
+              <textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Add your scrutiny comment for this row..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                rows={2}
+              />
+              <div className="flex justify-end space-x-2 mt-2">
+                <button
+                  onClick={() => setSelectedFieldForComment(null)}
+                  className="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleAddComment(selectedFieldForComment)}
+                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center space-x-1"
+                >
+                  <Send size={14} />
+                  <span>Add Comment</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Scrutiny Actions */}

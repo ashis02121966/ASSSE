@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ClipboardList, Search, Filter, Eye, Edit, CheckCircle, AlertCircle, Clock, FileText } from 'lucide-react';
+import { surveyBlocks as allSurveyBlocks } from '../../data/surveyBlocks';
 
 interface AllocatedSurvey {
   id: string;
@@ -36,6 +37,7 @@ const SurveyManagement: React.FC = () => {
   const [selectedSurvey, setSelectedSurvey] = useState<AllocatedSurvey | null>(null);
   const [currentBlock, setCurrentBlock] = useState<number>(0);
   const [showSurveyForm, setShowSurveyForm] = useState(false);
+  const [surveyResponses, setSurveyResponses] = useState<{[key: string]: any}>({});
 
   // Mock allocated surveys data with GSTN
   const allocatedSurveys: AllocatedSurvey[] = [
@@ -84,54 +86,22 @@ const SurveyManagement: React.FC = () => {
     }
   ];
 
-  // Mock survey blocks with GSTIN and DSL fields
-  const surveyBlocks: SurveyBlock[] = [
-    {
-      id: 'block-0',
-      name: 'Block 0: Identification of the Enterprise',
-      description: 'Enterprise identification details',
-      completed: false,
-      fields: [
-        { id: 'gstin', label: 'GSTIN', type: 'text', value: selectedSurvey?.gstn || '', required: true, readOnly: true },
-        { id: 'dsl_number', label: 'DSL Number', type: 'text', value: selectedSurvey?.dslNumber || '', required: true, readOnly: true },
-        { id: 'enterprise_name', label: 'Name of the Enterprise', type: 'text', value: selectedSurvey?.enterpriseName || '', required: true },
-        { id: 'enterprise_address', label: 'Address of the Enterprise', type: 'textarea', value: '', required: true },
-        { id: 'contact_person', label: 'Contact Person Name', type: 'text', value: '', required: true },
-        { id: 'contact_phone', label: 'Contact Phone', type: 'text', value: '', required: true },
-        { id: 'contact_email', label: 'Contact Email', type: 'text', value: '', required: false }
-      ]
-    },
-    {
-      id: 'block-1',
-      name: 'Block 1: Operational Particulars',
-      description: 'Details about the operational particulars of the enterprise',
-      completed: false,
-      fields: [
-        { id: 'gstin_ref', label: 'GSTIN (Reference)', type: 'text', value: selectedSurvey?.gstn || '', required: false, readOnly: true },
-        { id: 'dsl_ref', label: 'DSL Number (Reference)', type: 'text', value: selectedSurvey?.dslNumber || '', required: false, readOnly: true },
-        { id: 'sector', label: 'Sector', type: 'select', value: '', required: true },
-        { id: 'type_of_organization', label: 'Type of Organization', type: 'select', value: '', required: true },
-        { id: 'registration_status', label: 'Registration Status', type: 'select', value: '', required: true },
-        { id: 'major_activity', label: 'Major Activity Code (NIC 2008)', type: 'text', value: '', required: true },
-        { id: 'accounting_period', label: 'Accounting Period', type: 'text', value: '', required: true }
-      ]
-    },
-    {
-      id: 'block-2',
-      name: 'Block 2: Employment and Labour Cost',
-      description: 'Details of employment and labour cost during the accounting period',
-      completed: false,
-      fields: [
-        { id: 'gstin_emp', label: 'GSTIN (Reference)', type: 'text', value: selectedSurvey?.gstn || '', required: false, readOnly: true },
-        { id: 'dsl_emp', label: 'DSL Number (Reference)', type: 'text', value: selectedSurvey?.dslNumber || '', required: false, readOnly: true },
-        { id: 'total_employees', label: 'Total Number of Employees', type: 'number', value: '', required: true },
-        { id: 'male_employees', label: 'Male Employees', type: 'number', value: '', required: true },
-        { id: 'female_employees', label: 'Female Employees', type: 'number', value: '', required: true },
-        { id: 'total_wages', label: 'Total Wages/Salaries (Rs.)', type: 'number', value: '', required: true },
-        { id: 'working_days', label: 'Number of Working Days', type: 'number', value: '', required: true }
-      ]
-    }
-  ];
+  // Get survey blocks with GSTIN and DSL fields populated
+  const getSurveyBlocks = (): SurveyBlock[] => {
+    return allSurveyBlocks.map(block => ({
+      ...block,
+      fields: block.fields.map(field => ({
+        ...field,
+        value: field.id === 'gstin' || field.id.includes('gstin') ? selectedSurvey?.gstn || '' :
+               field.id === 'dsl_number' || field.id.includes('dsl') ? selectedSurvey?.dslNumber || '' :
+               field.id === 'enterprise_name_current' ? selectedSurvey?.enterpriseName || '' :
+               surveyResponses[field.id] || field.value || '',
+        readOnly: field.id === 'gstin' || field.id.includes('gstin') || 
+                  field.id === 'dsl_number' || field.id.includes('dsl') || 
+                  field.readOnly
+      }))
+    }));
+  };
 
   const filteredSurveys = allocatedSurveys.filter(survey => {
     const matchesSearch = survey.enterpriseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -162,6 +132,19 @@ const SurveyManagement: React.FC = () => {
     setSelectedSurvey(survey);
     setCurrentBlock(0);
     setShowSurveyForm(true);
+    // Initialize survey responses with enterprise data
+    setSurveyResponses({
+      gstin: survey.gstn,
+      dsl_number: survey.dslNumber,
+      enterprise_name_current: survey.enterpriseName
+    });
+  };
+
+  const handleFieldChange = (fieldId: string, value: any) => {
+    setSurveyResponses(prev => ({
+      ...prev,
+      [fieldId]: value
+    }));
   };
 
   const handleSaveBlock = () => {
@@ -170,6 +153,7 @@ const SurveyManagement: React.FC = () => {
   };
 
   const handleNextBlock = () => {
+    const surveyBlocks = getSurveyBlocks();
     if (currentBlock < surveyBlocks.length - 1) {
       setCurrentBlock(currentBlock + 1);
     }
@@ -185,9 +169,11 @@ const SurveyManagement: React.FC = () => {
     alert('Survey submitted successfully!');
     setShowSurveyForm(false);
     setSelectedSurvey(null);
+    setSurveyResponses({});
   };
 
   const renderSurveyForm = () => {
+    const surveyBlocks = getSurveyBlocks();
     const block = surveyBlocks[currentBlock];
     
     return (
@@ -231,50 +217,102 @@ const SurveyManagement: React.FC = () => {
 
         {/* Survey Form Fields */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {block.fields.map((field) => (
-              <div key={field.id} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {field.label}
-                  {field.required && <span className="text-red-500 ml-1">*</span>}
-                  {field.readOnly && <span className="text-blue-500 ml-1">(Read-only)</span>}
-                </label>
-                {field.type === 'textarea' ? (
-                  <textarea
-                    value={field.value}
-                    readOnly={field.readOnly}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                      field.readOnly ? 'bg-gray-50 text-gray-600' : ''
-                    }`}
-                    rows={3}
-                    placeholder={field.readOnly ? '' : `Enter ${field.label.toLowerCase()}`}
-                  />
-                ) : field.type === 'select' ? (
-                  <select
-                    value={field.value}
-                    disabled={field.readOnly}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                      field.readOnly ? 'bg-gray-50 text-gray-600' : ''
-                    }`}
-                  >
-                    <option value="">Select {field.label}</option>
-                    <option value="option1">Option 1</option>
-                    <option value="option2">Option 2</option>
-                  </select>
-                ) : (
-                  <input
-                    type={field.type}
-                    value={field.value}
-                    readOnly={field.readOnly}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                      field.readOnly ? 'bg-gray-50 text-gray-600' : ''
-                    }`}
-                    placeholder={field.readOnly ? '' : `Enter ${field.label.toLowerCase()}`}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+          {block.isGrid ? (
+            <div className="overflow-x-auto">
+              <h4 className="font-medium text-gray-900 mb-4">Grid Data Entry</h4>
+              <table className="w-full border border-gray-300">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {block.gridColumns?.map((column) => (
+                      <th key={column.id} className="px-4 py-2 border border-gray-300 text-left text-sm font-medium text-gray-700">
+                        {column.label}
+                        {column.required && <span className="text-red-500 ml-1">*</span>}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {block.gridData?.map((row, rowIndex) => (
+                    <tr key={rowIndex} className="hover:bg-gray-50">
+                      {block.gridColumns?.map((column) => (
+                        <td key={column.id} className="px-4 py-2 border border-gray-300">
+                          {column.type === 'select' ? (
+                            <select
+                              value={row[column.id] || ''}
+                              onChange={(e) => handleFieldChange(`${block.id}_${rowIndex}_${column.id}`, e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            >
+                              <option value="">Select</option>
+                              <option value="1">Yes</option>
+                              <option value="2">No</option>
+                            </select>
+                          ) : (
+                            <input
+                              type={column.type}
+                              value={row[column.id] || ''}
+                              onChange={(e) => handleFieldChange(`${block.id}_${rowIndex}_${column.id}`, e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder={`Enter ${column.label.toLowerCase()}`}
+                            />
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {block.fields.map((field) => (
+                <div key={field.id} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {field.label}
+                    {field.required && <span className="text-red-500 ml-1">*</span>}
+                    {field.readOnly && <span className="text-blue-500 ml-1">(Read-only)</span>}
+                  </label>
+                  {field.type === 'textarea' ? (
+                    <textarea
+                      value={field.value}
+                      onChange={(e) => handleFieldChange(field.id, e.target.value)}
+                      readOnly={field.readOnly}
+                      className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        field.readOnly ? 'bg-gray-50 text-gray-600' : ''
+                      }`}
+                      rows={3}
+                      placeholder={field.readOnly ? '' : `Enter ${field.label.toLowerCase()}`}
+                    />
+                  ) : field.type === 'select' ? (
+                    <select
+                      value={field.value}
+                      onChange={(e) => handleFieldChange(field.id, e.target.value)}
+                      disabled={field.readOnly}
+                      className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        field.readOnly ? 'bg-gray-50 text-gray-600' : ''
+                      }`}
+                    >
+                      <option value="">Select {field.label}</option>
+                      <option value="1">Rural</option>
+                      <option value="2">Urban</option>
+                      <option value="option1">Option 1</option>
+                      <option value="option2">Option 2</option>
+                    </select>
+                  ) : (
+                    <input
+                      type={field.type}
+                      value={field.value}
+                      onChange={(e) => handleFieldChange(field.id, e.target.value)}
+                      readOnly={field.readOnly}
+                      className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        field.readOnly ? 'bg-gray-50 text-gray-600' : ''
+                      }`}
+                      placeholder={field.readOnly ? '' : `Enter ${field.label.toLowerCase()}`}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Navigation Buttons */}
