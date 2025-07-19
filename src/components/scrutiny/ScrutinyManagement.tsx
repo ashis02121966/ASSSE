@@ -130,7 +130,7 @@ const ScrutinyManagement: React.FC = () => {
                field.id === 'dsl_number' || field.id.includes('dsl') ? selectedSurvey?.dslNumber || '' :
                field.id === 'enterprise_name_current' ? selectedSurvey?.enterpriseName || '' :
                sampleData[field.id] || surveyResponses[field.id] || field.value || '',
-        readOnly: field.validation === 'ds_user_only' ? !isDSUser() : true // Block 14 editable for DS Users, others read-only
+        readOnly: true // All fields are read-only in scrutiny mode
       })),
       gridData: block.gridData?.map(row => ({
         ...row,

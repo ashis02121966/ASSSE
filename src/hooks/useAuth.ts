@@ -47,6 +47,10 @@ export const useAuth = () => {
     return user.permissions?.includes(permission) || false;
   };
 
+  const isDSUser = (): boolean => {
+    return hasRole('DS_USER');
+  };
+
   const login = async (credentials: LoginCredentials): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
