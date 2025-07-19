@@ -338,7 +338,16 @@ const ScrutinyManagement: React.FC = () => {
                     <tr key={rowIndex} className="hover:bg-gray-50">
                       {block.gridColumns?.map((column) => (
                         <td key={column.id} className="px-4 py-2 border border-gray-300">
-                          <div className="text-sm text-gray-900">{row[column.id] || '-'}</div>
+                          {/* Handle Block 12 special display in scrutiny */}
+                          {block.id === 'block-12' ? (
+                            row[column.id] === 'NO_ENTRY' || row[column.id] === '' ? (
+                              <div className="text-sm text-gray-400 italic">-</div>
+                            ) : (
+                              <div className="text-sm text-gray-900">{row[column.id]}</div>
+                            )
+                          ) : (
+                            <div className="text-sm text-gray-900">{row[column.id] || '-'}</div>
+                          )}
                         </td>
                       ))}
                       <td className="px-4 py-2 border border-gray-300">

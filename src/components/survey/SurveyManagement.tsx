@@ -33,7 +33,7 @@ interface SurveyBlock {
 }
 
 const SurveyManagement: React.FC = () => {
-  const { isDSUser } = useAuth();
+  const { isDSUser, user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedSurvey, setSelectedSurvey] = useState<AllocatedSurvey | null>(null);
