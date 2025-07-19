@@ -496,6 +496,31 @@ export const surveyBlocks: SurveyBlock[] = [
   }
   ,
   {
+    id: 'block-12',
+    name: 'Block 12: Particulars of field operations',
+    description: 'Field operations details including survey supervisor and inspecting authority information',
+    completed: false,
+    isGrid: true,
+    gridColumns: [
+      { id: 'sl_no', label: 'Sl. No.', type: 'number', required: true },
+      { id: 'items', label: 'Items', type: 'text', required: true },
+      { id: 'survey_supervisor', label: 'Survey Supervisor (SS) / Senior Statistical Officer (SSO)', type: 'text', required: false },
+      { id: 'inspecting_authority', label: 'Inspecting / higher Authority', type: 'text', required: false }
+    ],
+    gridData: [
+      { sl_no: 1, items: '(i) Name (block letters)', survey_supervisor: 'AUTO_POPULATE_USER_NAME', inspecting_authority: 'AUTO_POPULATE_INSPECTOR_NAME' },
+      { sl_no: '', items: '(ii) Code', survey_supervisor: 'AUTO_POPULATE_USER_ID', inspecting_authority: 'AUTO_POPULATE_INSPECTOR_ID' },
+      { sl_no: 2, items: 'Date of Survey/inspection', survey_supervisor: 'AUTO_POPULATE_SURVEY_DATE', inspecting_authority: 'AUTO_POPULATE_INSPECTION_DATE' },
+      { sl_no: 3, items: 'Date of Receipt', survey_supervisor: 'NO_ENTRY', inspecting_authority: 'AUTO_POPULATE_RECEIPT_DATE' },
+      { sl_no: 4, items: 'Date of Scrutiny', survey_supervisor: 'NO_ENTRY', inspecting_authority: 'AUTO_POPULATE_SCRUTINY_DATE' },
+      { sl_no: 5, items: 'Date of Dispatch', survey_supervisor: 'AUTO_POPULATE_DISPATCH_DATE', inspecting_authority: 'AUTO_POPULATE_INSPECTOR_DISPATCH_DATE' },
+      { sl_no: 6, items: 'Number of investigators (FI/JSO) in the team', survey_supervisor: 'USER_ENTRY', inspecting_authority: 'NO_ENTRY' },
+      { sl_no: 7, items: 'Signature', survey_supervisor: 'NO_ENTRY', inspecting_authority: 'NO_ENTRY' }
+    ],
+    fields: []
+  }
+  ,
+  {
     id: 'block-14',
     name: 'Block 14: Comments by inspecting / higher authority',
     description: 'Comments section for inspecting officers and higher authorities',

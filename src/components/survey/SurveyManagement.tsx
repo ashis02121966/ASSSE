@@ -91,6 +91,10 @@ const SurveyManagement: React.FC = () => {
 
   // Get survey blocks with GSTIN and DSL fields populated
   const getSurveyBlocks = (): SurveyBlock[] => {
+    const currentUser = user?.name || 'Current User';
+    const currentUserId = user?.id || 'USER_ID';
+    const currentDate = new Date().toLocaleDateString('en-GB'); // DD/MM/YY format
+    
     return allSurveyBlocks.map(block => ({
       ...block,
       fields: block.fields.map(field => ({
@@ -102,6 +106,25 @@ const SurveyManagement: React.FC = () => {
         readOnly: field.id === 'gstin' || field.id.includes('gstin') || 
                   field.id === 'dsl_number' || field.id.includes('dsl') || 
                   field.readOnly
+      })),
+      gridData: block.gridData?.map(row => ({
+        ...row,
+        // Auto-populate Block 12 fields
+        survey_supervisor: row.survey_supervisor === 'AUTO_POPULATE_USER_NAME' ? currentUser :
+                          row.survey_supervisor === 'AUTO_POPULATE_USER_ID' ? currentUserId :
+                          row.survey_supervisor === 'AUTO_POPULATE_SURVEY_DATE' ? currentDate :
+                          row.survey_supervisor === 'AUTO_POPULATE_DISPATCH_DATE' ? currentDate :
+                          row.survey_supervisor === 'USER_ENTRY' ? (surveyResponses[`${block.id}_${row.sl_no}_investigators`] || '') :
+                          row.survey_supervisor === 'NO_ENTRY' ? '' :
+                          row.survey_supervisor || '',
+        inspecting_authority: row.inspecting_authority === 'AUTO_POPULATE_INSPECTOR_NAME' ? '' :
+                             row.inspecting_authority === 'AUTO_POPULATE_INSPECTOR_ID' ? '' :
+                             row.inspecting_authority === 'AUTO_POPULATE_INSPECTION_DATE' ? '' :
+                             row.inspecting_authority === 'AUTO_POPULATE_RECEIPT_DATE' ? '' :
+                             row.inspecting_authority === 'AUTO_POPULATE_SCRUTINY_DATE' ? '' :
+                             row.inspecting_authority === 'AUTO_POPULATE_INSPECTOR_DISPATCH_DATE' ? '' :
+                             row.inspecting_authority === 'NO_ENTRY' ? '' :
+                             row.inspecting_authority || ''
       }))
     }));
   };
