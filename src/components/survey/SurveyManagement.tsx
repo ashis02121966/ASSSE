@@ -37,6 +37,7 @@ const SurveyManagement: React.FC = () => {
   const [selectedSurvey, setSelectedSurvey] = useState<AllocatedSurvey | null>(null);
   const [currentBlock, setCurrentBlock] = useState<number>(0);
   const [showSurveyForm, setShowSurveyForm] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [surveyResponses, setSurveyResponses] = useState<{[key: string]: any}>({});
 
   // Mock allocated surveys data with GSTN
@@ -152,6 +153,20 @@ const SurveyManagement: React.FC = () => {
     alert('Block data saved successfully!');
   };
 
+  const handleSaveAsDraft = () => {
+    // Save current survey as draft
+    alert('Survey saved as draft successfully!');
+  };
+
+  const handleViewSurvey = (survey: AllocatedSurvey) => {
+    setSelectedSurvey(survey);
+    setShowViewModal(true);
+  };
+
+  const handleBlockNavigation = (blockIndex: number) => {
+    setCurrentBlock(blockIndex);
+  };
+
   const handleNextBlock = () => {
     const surveyBlocks = getSurveyBlocks();
     if (currentBlock < surveyBlocks.length - 1) {
@@ -199,7 +214,7 @@ const SurveyManagement: React.FC = () => {
         {/* Enterprise Info Header */}
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
           <h3 className="font-medium text-blue-900 mb-2">Enterprise Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="font-medium text-blue-700">Enterprise:</span>
               <p className="text-blue-900">{selectedSurvey?.enterpriseName}</p>
@@ -211,6 +226,20 @@ const SurveyManagement: React.FC = () => {
             <div>
               <span className="font-medium text-blue-700">DSL Number:</span>
               <p className="text-blue-900 font-mono">{selectedSurvey?.dslNumber}</p>
+            </div>
+            <div>
+              <span className="font-medium text-blue-700">Navigate to Block:</span>
+              <select
+                value={currentBlock}
+                onChange={(e) => handleBlockNavigation(parseInt(e.target.value))}
+                className="mt-1 w-full px-2 py-1 border border-blue-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {surveyBlocks.map((block, index) => (
+                  <option key={block.id} value={index}>
+                    {block.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
@@ -333,6 +362,13 @@ const SurveyManagement: React.FC = () => {
               Save Block
             </button>
             
+            <button
+              onClick={handleSaveAsDraft}
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+            >
+              Save as Draft
+            </button>
+            
             {currentBlock === surveyBlocks.length - 1 ? (
               <button
                 onClick={handleSubmitSurvey}
@@ -348,6 +384,99 @@ const SurveyManagement: React.FC = () => {
                 Next Block
               </button>
             )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderViewModal = () => {
+    if (!selectedSurvey || !showViewModal) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Survey Details</h3>
+            <button 
+              onClick={() => setShowViewModal(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Enterprise Name
+                </label>
+                <p className="text-sm text-gray-900 p-2 bg-gray-50 rounded">{selectedSurvey.enterpriseName}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  GSTN
+                </label>
+                <p className="text-sm text-gray-900 p-2 bg-gray-50 rounded font-mono">{selectedSurvey.gstn}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  DSL Number
+                </label>
+                <p className="text-sm text-gray-900 p-2 bg-gray-50 rounded font-mono">{selectedSurvey.dslNumber}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Sector
+                </label>
+                <p className="text-sm text-gray-900 p-2 bg-gray-50 rounded">{selectedSurvey.sector}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <div className="p-2">{getStatusBadge(selectedSurvey.status)}</div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Last Modified
+                </label>
+                <p className="text-sm text-gray-900 p-2 bg-gray-50 rounded">{selectedSurvey.lastModified}</p>
+              </div>
+            </div>
+            
+            {selectedSurvey.compiler && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Compiler
+                </label>
+                <p className="text-sm text-gray-900 p-2 bg-gray-50 rounded">{selectedSurvey.compiler}</p>
+              </div>
+            )}
+          </div>
+          
+          <div className="mt-6 flex justify-end space-x-3">
+            <button
+              onClick={() => setShowViewModal(false)}
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Close
+            </button>
+            <button
+              onClick={() => {
+                setShowViewModal(false);
+                handleStartSurvey(selectedSurvey);
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
+            >
+              Start/Continue Survey
+            </button>
           </div>
         </div>
       </div>
@@ -464,7 +593,7 @@ const SurveyManagement: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center space-x-2">
                       <button 
-                        onClick={() => alert(`Viewing details for ${survey.enterpriseName}`)}
+                        onClick={() => handleViewSurvey(survey)}
                         className="text-blue-600 hover:text-blue-800 p-1 rounded"
                         title="View Details"
                       >
@@ -485,6 +614,9 @@ const SurveyManagement: React.FC = () => {
           </table>
         </div>
       </div>
+      
+      {/* View Modal */}
+      {renderViewModal()}
     </div>
   );
 };
