@@ -338,6 +338,21 @@ const SurveyManagement: React.FC = () => {
                       placeholder={field.readOnly ? '' : `Enter ${field.label.toLowerCase()}`}
                     />
                   )}
+                  
+                  {/* Special handling for Block 14 - DS User only */}
+                  {field.validation === 'ds_user_only' && (
+                    <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-yellow-400 rounded-full"></div>
+                        <span className="text-sm font-medium text-yellow-800">
+                          DS User Access Required
+                        </span>
+                      </div>
+                      <p className="text-xs text-yellow-700 mt-1">
+                        This field can only be edited by DS Users (Data Scrutinizers)
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
