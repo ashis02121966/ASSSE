@@ -43,6 +43,7 @@ interface ScrutinyComment {
 }
 
 const ScrutinyManagement: React.FC = () => {
+  const { isDSUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedSurvey, setSelectedSurvey] = useState<ScrutinySurvey | null>(null);

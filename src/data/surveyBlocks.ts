@@ -479,23 +479,6 @@ export const surveyBlocks: SurveyBlock[] = [
   }
   ,
   {
-    id: 'block-14',
-    name: 'Block 14: Comments by inspecting / higher authority',
-    description: 'Comments section for inspecting officers and higher authorities',
-    completed: false,
-    fields: [
-      { 
-        id: 'inspector_comments', 
-        label: 'Comments by inspecting / higher authority', 
-        type: 'textarea', 
-        value: '', 
-        required: false,
-        validation: 'ds_user_only'
-      }
-    ]
-  }
-  ,
-  {
     id: 'block-13',
     name: 'Block 13: Remarks by Survey Supervisor (SS) / Senior Statistical Officer (SSO)',
     description: 'Remarks section accessible only to Survey Supervisors and Senior Statistical Officers',
@@ -508,6 +491,23 @@ export const surveyBlocks: SurveyBlock[] = [
         value: '', 
         required: false,
         validation: 'supervisor_only'
+      }
+    ]
+  }
+  ,
+  {
+    id: 'block-14',
+    name: 'Block 14: Comments by inspecting / higher authority',
+    description: 'Comments section for inspecting officers and higher authorities',
+    completed: false,
+    fields: [
+      { 
+        id: 'inspector_comments', 
+        label: 'Comments by inspecting / higher authority', 
+        type: 'textarea', 
+        value: '', 
+        required: false,
+        validation: 'ds_user_only'
       }
     ]
   }

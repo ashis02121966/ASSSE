@@ -304,20 +304,20 @@ const SurveyManagement: React.FC = () => {
                     <textarea
                       value={field.value}
                       onChange={(e) => handleFieldChange(field.id, e.target.value)}
-                      readOnly={field.readOnly}
+                      readOnly={field.readOnly || (field.validation === 'ds_user_only' && !isDSUser())}
                       className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        field.readOnly ? 'bg-gray-50 text-gray-600' : ''
+                        (field.readOnly || (field.validation === 'ds_user_only' && !isDSUser())) ? 'bg-gray-50 text-gray-600' : ''
                       }`}
                       rows={3}
-                      placeholder={field.readOnly ? '' : `Enter ${field.label.toLowerCase()}`}
+                      placeholder={(field.readOnly || (field.validation === 'ds_user_only' && !isDSUser())) ? '' : `Enter ${field.label.toLowerCase()}`}
                     />
                   ) : field.type === 'select' ? (
                     <select
                       value={field.value}
                       onChange={(e) => handleFieldChange(field.id, e.target.value)}
-                      disabled={field.readOnly}
+                      disabled={field.readOnly || (field.validation === 'ds_user_only' && !isDSUser())}
                       className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        field.readOnly ? 'bg-gray-50 text-gray-600' : ''
+                        (field.readOnly || (field.validation === 'ds_user_only' && !isDSUser())) ? 'bg-gray-50 text-gray-600' : ''
                       }`}
                     >
                       <option value="">Select {field.label}</option>
@@ -331,11 +331,11 @@ const SurveyManagement: React.FC = () => {
                       type={field.type}
                       value={field.value}
                       onChange={(e) => handleFieldChange(field.id, e.target.value)}
-                      readOnly={field.readOnly}
+                      readOnly={field.readOnly || (field.validation === 'ds_user_only' && !isDSUser())}
                       className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        field.readOnly ? 'bg-gray-50 text-gray-600' : ''
+                        (field.readOnly || (field.validation === 'ds_user_only' && !isDSUser())) ? 'bg-gray-50 text-gray-600' : ''
                       }`}
-                      placeholder={field.readOnly ? '' : `Enter ${field.label.toLowerCase()}`}
+                      placeholder={(field.readOnly || (field.validation === 'ds_user_only' && !isDSUser())) ? '' : `Enter ${field.label.toLowerCase()}`}
                     />
                   )}
                   

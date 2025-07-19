@@ -105,6 +105,7 @@ export const useAuth = () => {
     loading,
     hasRole,
     hasPermission,
+    isDSUser,
     login,
     logout
   };
