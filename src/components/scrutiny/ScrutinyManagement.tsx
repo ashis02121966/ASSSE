@@ -43,7 +43,6 @@ interface ScrutinyComment {
 }
 
 const ScrutinyManagement: React.FC = () => {
-  const { isDSUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedSurvey, setSelectedSurvey] = useState<ScrutinySurvey | null>(null);
@@ -131,7 +130,7 @@ const ScrutinyManagement: React.FC = () => {
                field.id === 'dsl_number' || field.id.includes('dsl') ? selectedSurvey?.dslNumber || '' :
                field.id === 'enterprise_name_current' ? selectedSurvey?.enterpriseName || '' :
                sampleData[field.id] || surveyResponses[field.id] || field.value || '',
-        readOnly: true // All fields are read-only in scrutiny mode
+        readOnly: field.validation === 'ds_user_only' ? !isDSUser() : true // Block 14 editable for DS Users, others read-only
       })),
       gridData: block.gridData?.map(row => ({
         ...row,
