@@ -293,7 +293,6 @@ const SurveyManagement: React.FC = () => {
                           {column.type === 'select' ? (
                             <select
                               value={row[column.id] || ''}
-                              onChange={(e) => handleFieldChange(`${block.id}_${rowIndex}_${column.id}`, e.target.value)}
                               className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             >
                               <option value="">Select</option>
@@ -304,7 +303,6 @@ const SurveyManagement: React.FC = () => {
                             <input
                               type={column.type}
                               value={row[column.id] || ''}
-                              onChange={(e) => handleFieldChange(`${block.id}_${rowIndex}_${column.id}`, e.target.value)}
                               className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                               placeholder={`Enter ${column.label.toLowerCase()}`}
                             />
