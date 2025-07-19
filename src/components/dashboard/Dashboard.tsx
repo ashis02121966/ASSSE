@@ -74,7 +74,7 @@ const Dashboard: React.FC = () => {
         {/* Survey Progress Chart */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Survey Progress</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Survey Progress Dashboard</h3>
             <BarChart3 className="h-5 w-5 text-gray-400" />
           </div>
           <div className="space-y-4">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { MenuItem } from '../../types';
 import { useAuth } from '../../hooks/useAuth';
@@ -8,9 +8,11 @@ interface SidebarProps {
   menuItems: MenuItem[];
   currentPath: string;
   onNavigate: (path: string) => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ menuItems, currentPath, onNavigate }) => {
+const Sidebar: React.FC<SidebarProps> = ({ menuItems, currentPath, onNavigate, isCollapsed, onToggleCollapse }) => {
   const { user, hasRole } = useAuth();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
@@ -55,26 +57,27 @@ const Sidebar: React.FC<SidebarProps> = ({ menuItems, currentPath, onNavigate })
               onNavigate(item.path);
             }
           }}
+          title={isCollapsed ? item.title : ''}
         >
-          <div className="flex items-center flex-1 space-x-3">
+          <div className={`flex items-center flex-1 ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
             <span className={isActive ? 'text-blue-600' : 'text-gray-500'}>
               {getIcon(item.icon)}
             </span>
-            <span className="text-sm font-medium">{item.title}</span>
-            {item.badge && item.badge > 0 && (
+            {!isCollapsed && <span className="text-sm font-medium">{item.title}</span>}
+            {!isCollapsed && item.badge && item.badge > 0 && (
               <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
                 {item.badge}
               </span>
             )}
           </div>
-          {hasChildren && (
+          {!isCollapsed && hasChildren && (
             <span className="text-gray-400">
               {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
             </span>
           )}
         </div>
 
-        {hasChildren && isExpanded && (
+        {!isCollapsed && hasChildren && isExpanded && (
           <div className="bg-gray-50">
             {item.children!.map(child => renderMenuItem(child, depth + 1))}
           </div>
@@ -84,9 +87,16 @@ const Sidebar: React.FC<SidebarProps> = ({ menuItems, currentPath, onNavigate })
   };
 
   return (
-    <div className="w-64 bg-white shadow-lg border-r border-gray-200 h-full overflow-y-auto">
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">Navigation</h2>
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} bg-white shadow-lg border-r border-gray-200 h-full overflow-y-auto transition-all duration-300`}>
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        {!isCollapsed && <h2 className="text-lg font-semibold text-gray-900">Navigation</h2>}
+        <button
+          onClick={onToggleCollapse}
+          className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+          title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+        >
+          {isCollapsed ? <Menu size={20} /> : <X size={20} />}
+        </button>
       </div>
       <nav className="mt-4">
         {menuItems.map(item => renderMenuItem(item))}
