@@ -1,7 +1,11 @@
 import React from 'react';
 import { BarChart3, TrendingUp, Users, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 
-const Dashboard: React.FC = () => {
+interface DashboardProps {
+  onNavigate?: (path: string) => void;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const stats = [
     {
       title: 'Total Enterprises',
@@ -133,19 +137,28 @@ const Dashboard: React.FC = () => {
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors">
+          <button 
+            onClick={() => onNavigate && onNavigate('/frame-upload')}
+            className="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors"
+          >
             <div className="flex items-center space-x-3">
               <FileText className="h-6 w-6 text-blue-600" />
               <span className="text-sm font-medium text-blue-900">Upload Frame</span>
             </div>
           </button>
-          <button className="p-4 bg-green-50 hover:bg-green-100 rounded-lg border border-green-200 transition-colors">
+          <button 
+            onClick={() => onNavigate && onNavigate('/frame-allocation')}
+            className="p-4 bg-green-50 hover:bg-green-100 rounded-lg border border-green-200 transition-colors"
+          >
             <div className="flex items-center space-x-3">
               <Users className="h-6 w-6 text-green-600" />
               <span className="text-sm font-medium text-green-900">Allocate Frame</span>
             </div>
           </button>
-          <button className="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg border border-purple-200 transition-colors">
+          <button 
+            onClick={() => onNavigate && onNavigate('/reports')}
+            className="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg border border-purple-200 transition-colors"
+          >
             <div className="flex items-center space-x-3">
               <BarChart3 className="h-6 w-6 text-purple-600" />
               <span className="text-sm font-medium text-purple-900">Generate Report</span>

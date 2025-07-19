@@ -39,7 +39,7 @@ function App() {
   const renderCurrentPage = () => {
     switch (currentPage) {
       case '/dashboard':
-        return <Dashboard />;
+        return <Dashboard onNavigate={setCurrentPage} />;
       case '/frame-upload':
         return <FrameUpload />;
       case '/frame-allocation':
