@@ -136,3 +136,74 @@ export interface LoginCredentials {
   email: string;
   password: string;
 }
+
+export interface Enterprise {
+  id: string;
+  name: string;
+  gstn?: string;
+  address?: string;
+  contactPerson?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  sector?: string;
+  district?: string;
+  state?: string;
+  pinCode?: string;
+  status: 'active' | 'inactive' | 'suspended';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SurveyTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  version: string;
+  isActive: boolean;
+  templateData: any;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EnterpriseSurvey {
+  id: string;
+  enterpriseId: string;
+  surveyId: string;
+  templateId?: string;
+  status: 'assigned' | 'in_progress' | 'completed' | 'overdue' | 'cancelled';
+  assignedTo?: string;
+  dueDate?: string;
+  completedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  enterprise?: Enterprise;
+  survey?: Survey;
+  template?: SurveyTemplate;
+  assignedUser?: User;
+}
+
+export interface AuditLog {
+  id: string;
+  tableName: string;
+  recordId: string;
+  action: 'INSERT' | 'UPDATE' | 'DELETE';
+  oldValues?: any;
+  newValues?: any;
+  userId?: string;
+  createdAt: string;
+  user?: User;
+}
+
+export interface ApiResponse<T> {
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}

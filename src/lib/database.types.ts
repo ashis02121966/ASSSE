@@ -401,6 +401,158 @@ export interface Database {
           created_at?: string
         }
       }
+      enterprises: {
+        Row: {
+          id: string
+          name: string
+          gstn: string | null
+          address: string | null
+          contact_person: string | null
+          contact_phone: string | null
+          contact_email: string | null
+          sector: string | null
+          district: string | null
+          state: string | null
+          pin_code: string | null
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          gstn?: string | null
+          address?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          contact_email?: string | null
+          sector?: string | null
+          district?: string | null
+          state?: string | null
+          pin_code?: string | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          gstn?: string | null
+          address?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          contact_email?: string | null
+          sector?: string | null
+          district?: string | null
+          state?: string | null
+          pin_code?: string | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      survey_templates: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          version: string
+          is_active: boolean
+          template_data: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          version?: string
+          is_active?: boolean
+          template_data?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          version?: string
+          is_active?: boolean
+          template_data?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      enterprise_surveys: {
+        Row: {
+          id: string
+          enterprise_id: string
+          survey_id: string
+          template_id: string | null
+          status: string
+          assigned_to: string | null
+          due_date: string | null
+          completed_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          enterprise_id: string
+          survey_id: string
+          template_id?: string | null
+          status?: string
+          assigned_to?: string | null
+          due_date?: string | null
+          completed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          enterprise_id?: string
+          survey_id?: string
+          template_id?: string | null
+          status?: string
+          assigned_to?: string | null
+          due_date?: string | null
+          completed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      audit_logs: {
+        Row: {
+          id: string
+          table_name: string
+          record_id: string
+          action: string
+          old_values: Json | null
+          new_values: Json | null
+          user_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          table_name: string
+          record_id: string
+          action: string
+          old_values?: Json | null
+          new_values?: Json | null
+          user_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          table_name?: string
+          record_id?: string
+          action?: string
+          old_values?: Json | null
+          new_values?: Json | null
+          user_id?: string | null
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
