@@ -5,6 +5,7 @@ const GenerateNotice: React.FC = () => {
   const [selectedFrames, setSelectedFrames] = useState<string[]>([]);
   const [noticeTemplate, setNoticeTemplate] = useState('default');
   const [signatory, setSignatory] = useState('ro-user');
+  const [selectAll, setSelectAll] = useState(false);
 
   const frames = [
     { id: '1', fileName: 'ASI_Frame_2023_Manufacturing.xlsx', sector: 'Manufacturing', enterprises: 1250, status: 'allocated' },
@@ -36,6 +37,24 @@ const GenerateNotice: React.FC = () => {
         ? prev.filter(id => id !== frameId)
         : [...prev, frameId]
     );
+    
+    // Update selectAll state based on current selection
+    const updatedFrames = selectedFrames.includes(frameId) 
+      ? selectedFrames.filter(id => id !== frameId)
+      : [...selectedFrames, frameId];
+    setSelectAll(updatedFrames.length === frames.length);
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      // Deselect all
+      setSelectedFrames([]);
+      setSelectAll(false);
+    } else {
+      // Select all frames
+      setSelectedFrames(frames.map(frame => frame.id));
+      setSelectAll(true);
+    }
   };
 
   const handleGenerateNotices = () => {
@@ -75,7 +94,23 @@ const GenerateNotice: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">Select Frames for Notice Generation</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium text-gray-900">Select Frames for Notice Generation</h3>
+                <div className="flex items-center space-x-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={handleSelectAll}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Select All Frames</span>
+                  </label>
+                  <span className="text-sm text-gray-500">
+                    ({selectedFrames.length} of {frames.length} selected)
+                  </span>
+                </div>
+              </div>
             </div>
             <div className="p-6">
               <div className="space-y-4">
