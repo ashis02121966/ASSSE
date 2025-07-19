@@ -63,7 +63,63 @@ const GenerateNotice: React.FC = () => {
       return;
     }
     
-    alert(`Generating notices for ${selectedFrames.length} frame(s) using ${templates.find(t => t.id === noticeTemplate)?.name}`);
+    const selectedTemplate = templates.find(t => t.id === noticeTemplate);
+    const selectedSignatory = signatories.find(s => s.id === signatory);
+    
+    // Simulate notice generation process
+    const totalEnterprises = frames
+      .filter(f => selectedFrames.includes(f.id))
+      .reduce((sum, f) => sum + f.enterprises, 0);
+    
+    // Create a confirmation message
+    const confirmMessage = `Generate notices for ${selectedFrames.length} frame(s)?\n\n` +
+      `Template: ${selectedTemplate?.name}\n` +
+      `Signatory: ${selectedSignatory?.name}\n` +
+      `Total Enterprises: ${totalEnterprises.toLocaleString()}\n\n` +
+      `This will generate ${totalEnterprises.toLocaleString()} individual notices.`;
+    
+    if (confirm(confirmMessage)) {
+      // Simulate the generation process
+      alert('Notice generation started! You will be notified when the process is complete.');
+      
+      // Reset selections after successful generation
+      setSelectedFrames([]);
+      setSelectAll(false);
+      
+      // In a real application, this would trigger the actual notice generation process
+      console.log('Generating notices with configuration:', {
+        selectedFrames,
+        template: selectedTemplate,
+        signatory: selectedSignatory,
+        totalEnterprises
+      });
+    }
+  };
+
+  const handleDownloadNotice = (noticeId: string) => {
+    const notice = generatedNotices.find(n => n.id === noticeId);
+    if (!notice) return;
+    
+    // Simulate PDF download
+    const fileName = `Notice_${notice.enterpriseName.replace(/[^a-zA-Z0-9]/g, '_')}_${notice.generatedDate}.pdf`;
+    
+    // Create a blob with sample PDF content (in real app, this would be actual PDF data)
+    const samplePdfContent = `Notice for ${notice.enterpriseName}\nGenerated on: ${notice.generatedDate}\nStatus: ${notice.status}`;
+    const blob = new Blob([samplePdfContent], { type: 'application/pdf' });
+    
+    // Create download link
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    
+    // Cleanup
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    console.log(`Downloaded notice for: ${notice.enterpriseName}`);
   };
 
   const getStatusBadge = (status: string) => {
@@ -173,7 +229,11 @@ const GenerateNotice: React.FC = () => {
                         {getStatusBadge(notice.status)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <button className="text-blue-600 hover:text-blue-800 p-1 rounded">
+                        <button 
+                          onClick={() => handleDownloadNotice(notice.id)}
+                          className="text-blue-600 hover:text-blue-800 p-1 rounded transition-colors"
+                          title="Download Notice"
+                        >
                           <Download size={16} />
                         </button>
                       </td>
