@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ClipboardList, Search, Filter, Eye, Edit, CheckCircle, AlertCircle, Clock, FileText } from 'lucide-react';
 import { surveyBlocks as allSurveyBlocks } from '../../data/surveyBlocks';
+import { useAuth } from '../../hooks/useAuth';
 
 interface AllocatedSurvey {
   id: string;
@@ -32,6 +33,7 @@ interface SurveyBlock {
 }
 
 const SurveyManagement: React.FC = () => {
+  const { isDSUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedSurvey, setSelectedSurvey] = useState<AllocatedSurvey | null>(null);
