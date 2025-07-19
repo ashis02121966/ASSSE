@@ -90,9 +90,9 @@ const SurveyManagement: React.FC = () => {
   ];
 
   // Get survey blocks with GSTIN and DSL fields populated
-  const getSurveyBlocks = (): SurveyBlock[] => {
-    const currentUser = user?.name || 'Current User';
-    const currentUserId = user?.id || 'USER_ID';
+  const getSurveyBlocks = (currentUser: any): SurveyBlock[] => {
+    const currentUserName = currentUser?.name || 'Current User';
+    const currentUserId = currentUser?.id || 'USER_ID';
     const currentDate = new Date().toLocaleDateString('en-GB'); // DD/MM/YY format
     
     return allSurveyBlocks.map(block => ({
@@ -110,7 +110,7 @@ const SurveyManagement: React.FC = () => {
       gridData: block.gridData?.map(row => ({
         ...row,
         // Auto-populate Block 12 fields
-        survey_supervisor: row.survey_supervisor === 'AUTO_POPULATE_USER_NAME' ? currentUser :
+        survey_supervisor: row.survey_supervisor === 'AUTO_POPULATE_USER_NAME' ? currentUserName :
                           row.survey_supervisor === 'AUTO_POPULATE_USER_ID' ? currentUserId :
                           row.survey_supervisor === 'AUTO_POPULATE_SURVEY_DATE' ? currentDate :
                           row.survey_supervisor === 'AUTO_POPULATE_DISPATCH_DATE' ? currentDate :
@@ -213,7 +213,7 @@ const SurveyManagement: React.FC = () => {
   };
 
   const renderSurveyForm = () => {
-    const surveyBlocks = getSurveyBlocks();
+    const surveyBlocks = getSurveyBlocks(user);
     const block = surveyBlocks[currentBlock];
     
     return (
