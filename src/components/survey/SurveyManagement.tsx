@@ -103,9 +103,9 @@ const SurveyManagement: React.FC = () => {
                field.id === 'dsl_number' || field.id.includes('dsl') ? selectedSurvey?.dslNumber || '' :
                field.id === 'enterprise_name_current' ? selectedSurvey?.enterpriseName || '' :
                surveyResponses[field.id] || field.value || '',
-        readOnly: field.id === 'gstin' || field.id.includes('gstin') || 
-                  field.id === 'dsl_number' || field.id.includes('dsl') || 
-                  field.readOnly
+        readOnly: field.readOnly || 
+                  field.id === 'gstin' || field.id.includes('gstin') || 
+                  field.id === 'dsl_number' || field.id.includes('dsl')
       })),
       gridData: block.gridData?.map(row => ({
         ...row,
