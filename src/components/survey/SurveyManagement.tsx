@@ -292,7 +292,8 @@ const SurveyManagement: React.FC = () => {
                         <td key={column.id} className="px-4 py-2 border border-gray-300">
                           {column.type === 'select' ? (
                             <select
-                              value={row[column.id] || ''}
+                              value={surveyResponses[`${block.id}_${rowIndex}_${column.id}`] || row[column.id] || ''}
+                              onChange={(e) => handleFieldChange(`${block.id}_${rowIndex}_${column.id}`, e.target.value)}
                               className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             >
                               <option value="">Select</option>
@@ -302,7 +303,8 @@ const SurveyManagement: React.FC = () => {
                           ) : (
                             <input
                               type={column.type}
-                              value={row[column.id] || ''}
+                              value={surveyResponses[`${block.id}_${rowIndex}_${column.id}`] || row[column.id] || ''}
+                              onChange={(e) => handleFieldChange(`${block.id}_${rowIndex}_${column.id}`, e.target.value)}
                               className="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                               placeholder={`Enter ${column.label.toLowerCase()}`}
                             />
