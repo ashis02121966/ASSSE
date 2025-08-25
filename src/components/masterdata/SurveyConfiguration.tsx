@@ -2115,7 +2115,7 @@ const SurveyConfiguration: React.FC = () => {
                   <div className="grid grid-cols-1 gap-1">
                     <div><strong>Basic:</strong> Min/Max values, Length limits, Email format</div>
                     <div><strong>Statistical:</strong> SUM(revenue_items), AVERAGE(employee_salaries)</div>
-                    <div><strong>Custom:</strong> IF(total_employees > 50, annual_revenue > 1000000, true)</div>
+                     <div><strong>Custom:</strong> {'IF(total_employees > 50, annual_revenue > total_employees * 500000, true)'}</div>
                   </div>
                 </div>
               </div>
