@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Search, Save, X, Settings, Copy, Eye, Layers, ArrowUp, ArrowDown, FileTemplate, Grid, List, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Save, X, Settings, Copy, Eye, Layers, ArrowUp, ArrowDown, BookTemplate as FileTemplate, Grid, List, ChevronDown, ChevronUp } from 'lucide-react';
 import { surveySchedules } from '../../data/surveyBlocks';
 import { SurveySchedule, SurveyBlock, SurveyField } from '../../types';
 import { SurveyBlockApi } from '../../api/surveyBlockApi';
