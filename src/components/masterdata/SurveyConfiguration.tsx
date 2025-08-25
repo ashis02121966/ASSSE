@@ -1696,10 +1696,10 @@ const SurveyConfiguration: React.FC = () => {
                 <div className="bg-gray-50 border border-gray-200 rounded p-3">
                   <h6 className="text-sm font-medium text-gray-900 mb-2">Common Validation Examples:</h6>
                   <div className="space-y-1 text-xs text-gray-600">
-                    <div><code>{"min": 0, "max": 100}</code> - Number range</div>
-                    <div><code>{"minLength": 2, "maxLength": 50}</code> - Text length</div>
-                    <div><code>{"pattern": "^[A-Z0-9]+$"}</code> - Regex pattern</div>
-                    <div><code>{"email": true}</code> - Email validation</div>
+                    <div><code>&lbrace;"min": 0, "max": 100&rbrace;</code> - Number range</div>
+                    <div><code>&lbrace;"minLength": 2, "maxLength": 50&rbrace;</code> - Text length</div>
+                    <div><code>&lbrace;"pattern": "^[A-Z0-9]+$"&rbrace;</code> - Regex pattern</div>
+                    <div><code>&lbrace;"email": true&rbrace;</code> - Email validation</div>
                     <div><code>{"required": true}</code> - Required field</div>
                   </div>
                 </div>
