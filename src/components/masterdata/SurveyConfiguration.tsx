@@ -1700,7 +1700,7 @@ const SurveyConfiguration: React.FC = () => {
                     <div><code>&lbrace;"minLength": 2, "maxLength": 50&rbrace;</code> - Text length</div>
                     <div><code>&lbrace;"pattern": "^[A-Z0-9]+$"&rbrace;</code> - Regex pattern</div>
                     <div><code>&lbrace;"email": true&rbrace;</code> - Email validation</div>
-                    <div><code>{"required": true}</code> - Required field</div>
+                    <div><code>&lbrace;"required": true&rbrace;</code> - Required field</div>
                   </div>
                 </div>
               </div>
