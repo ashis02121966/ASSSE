@@ -2108,22 +2108,24 @@ const SurveyConfiguration: React.FC = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowItemModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  handleAddItem();
-                  setShowItemModal(false);
-                }}
-                disabled={!newItem.itemId || !newItem.itemName}
-                className="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
-              >
-                <Plus size={16} />
-                <span>Add Item</span>
-              </button>
-            </div>
+            <>
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowItemModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAddItem}
+                  disabled={!newItem.itemId || !newItem.itemName || !newItem.dataType}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+                >
+                  <Save size={16} />
+                  <span>Add Item</span>
+                </button>
+              </div>
+            </>
           </div>
         </div>
       )}
