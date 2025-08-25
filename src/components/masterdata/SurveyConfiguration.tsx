@@ -1700,7 +1700,7 @@ const SurveyConfiguration: React.FC = () => {
               {(newItem.dataType === 'select' || newItem.dataType === 'radio') && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Validation Rules
+                    Options
                   </label>
                   <div className="space-y-2">
                     <div className="flex space-x-2">
@@ -1737,340 +1737,356 @@ const SurveyConfiguration: React.FC = () => {
                   </div>
                 </div>
               )}
-                  
-                  {/* Rule Type Selection */}
-                  <div className="mb-3">
-                    <div className="flex space-x-4">
+
+              {/* Validation Rules */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Validation Rules
+                </label>
+                
+                {/* Rule Type Selection */}
+                <div className="mb-3">
+                  <div className="flex space-x-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="ruleType"
+                        value="basic"
+                        checked={validationRuleType === 'basic'}
+                        onChange={(e) => setValidationRuleType(e.target.value as 'basic' | 'statistical' | 'custom')}
+                        className="mr-2"
+                      />
+                      <span className="text-sm">Basic Rules</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="ruleType"
+                        value="statistical"
+                        checked={validationRuleType === 'statistical'}
+                        onChange={(e) => setValidationRuleType(e.target.value as 'basic' | 'statistical' | 'custom')}
+                        className="mr-2"
+                      />
+                      <span className="text-sm">Statistical Functions</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="ruleType"
+                        value="custom"
+                        checked={validationRuleType === 'custom'}
+                        onChange={(e) => setValidationRuleType(e.target.value as 'basic' | 'statistical' | 'custom')}
+                        className="mr-2"
+                      />
+                      <span className="text-sm">Custom Rules</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Basic Rules */}
+                {validationRuleType === 'basic' && (
+                  <div className="space-y-3 p-3 bg-gray-50 rounded-md">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Min Value</label>
+                        <input
+                          type="number"
+                          value={basicRules.min || ''}
+                          onChange={(e) => setBasicRules({...basicRules, min: e.target.value ? parseFloat(e.target.value) : undefined})}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Max Value</label>
+                        <input
+                          type="number"
+                          value={basicRules.max || ''}
+                          onChange={(e) => setBasicRules({...basicRules, max: e.target.value ? parseFloat(e.target.value) : undefined})}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="100"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Min Length</label>
+                        <input
+                          type="number"
+                          value={basicRules.minLength || ''}
+                          onChange={(e) => setBasicRules({...basicRules, minLength: e.target.value ? parseInt(e.target.value) : undefined})}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="2"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Max Length</label>
+                        <input
+                          type="number"
+                          value={basicRules.maxLength || ''}
+                          onChange={(e) => setBasicRules({...basicRules, maxLength: e.target.value ? parseInt(e.target.value) : undefined})}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="50"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Pattern (Regex)</label>
+                      <input
+                        type="text"
+                        value={basicRules.pattern || ''}
+                        onChange={(e) => setBasicRules({...basicRules, pattern: e.target.value})}
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        placeholder="^[A-Z0-9]+$"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-4">
                       <label className="flex items-center">
                         <input
-                          type="radio"
-                          name="ruleType"
-                          value="basic"
-                          checked={validationRuleType === 'basic'}
-                          onChange={(e) => setValidationRuleType(e.target.value as 'basic' | 'statistical' | 'custom')}
+                          type="checkbox"
+                          checked={basicRules.email || false}
+                          onChange={(e) => setBasicRules({...basicRules, email: e.target.checked})}
                           className="mr-2"
                         />
-                        <span className="text-sm">Basic Rules</span>
+                        <span className="text-xs">Email Format</span>
                       </label>
                       <label className="flex items-center">
                         <input
-                          type="radio"
-                          name="ruleType"
-                          value="statistical"
-                          checked={validationRuleType === 'statistical'}
-                          onChange={(e) => setValidationRuleType(e.target.value as 'basic' | 'statistical' | 'custom')}
+                          type="checkbox"
+                          checked={basicRules.numeric || false}
+                          onChange={(e) => setBasicRules({...basicRules, numeric: e.target.checked})}
                           className="mr-2"
                         />
-                        <span className="text-sm">Statistical Functions</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="ruleType"
-                          value="custom"
-                          checked={validationRuleType === 'custom'}
-                          onChange={(e) => setValidationRuleType(e.target.value as 'basic' | 'statistical' | 'custom')}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">Custom Rules</span>
+                        <span className="text-xs">Numeric Only</span>
                       </label>
                     </div>
                   </div>
+                )}
 
-                  {/* Basic Rules */}
-                  {validationRuleType === 'basic' && (
-                    <div className="space-y-3 p-3 bg-gray-50 rounded-md">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Min Value</label>
-                          <input
-                            type="number"
-                            value={basicRules.min || ''}
-                            onChange={(e) => setBasicRules({...basicRules, min: e.target.value ? parseFloat(e.target.value) : undefined})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                            placeholder="0"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Max Value</label>
-                          <input
-                            type="number"
-                            value={basicRules.max || ''}
-                            onChange={(e) => setBasicRules({...basicRules, max: e.target.value ? parseFloat(e.target.value) : undefined})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                            placeholder="100"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Min Length</label>
-                          <input
-                            type="number"
-                            value={basicRules.minLength || ''}
-                            onChange={(e) => setBasicRules({...basicRules, minLength: e.target.value ? parseInt(e.target.value) : undefined})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                            placeholder="2"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Max Length</label>
-                          <input
-                            type="number"
-                            value={basicRules.maxLength || ''}
-                            onChange={(e) => setBasicRules({...basicRules, maxLength: e.target.value ? parseInt(e.target.value) : undefined})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                            placeholder="50"
-                          />
-                        </div>
-                      </div>
+                {/* Statistical Functions */}
+                {validationRuleType === 'statistical' && (
+                  <div className="space-y-3 p-3 bg-blue-50 rounded-md">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Statistical Function</label>
+                      <select
+                        value={statisticalRules.function || ''}
+                        onChange={(e) => setStatisticalRules({...statisticalRules, function: e.target.value})}
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                      >
+                        <option value="">Select Function</option>
+                        <option value="sum">SUM - Calculate total of values</option>
+                        <option value="average">AVERAGE - Calculate mean value</option>
+                        <option value="count">COUNT - Count non-empty values</option>
+                        <option value="min">MIN - Find minimum value</option>
+                        <option value="max">MAX - Find maximum value</option>
+                        <option value="median">MEDIAN - Find middle value</option>
+                        <option value="mode">MODE - Find most frequent value</option>
+                        <option value="variance">VARIANCE - Calculate variance</option>
+                        <option value="stddev">STANDARD DEVIATION - Calculate std deviation</option>
+                        <option value="percentage">PERCENTAGE - Calculate percentage</option>
+                        <option value="ratio">RATIO - Calculate ratio between fields</option>
+                        <option value="growth_rate">GROWTH RATE - Calculate growth percentage</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Source Fields (comma-separated item IDs)</label>
+                      <input
+                        type="text"
+                        value={statisticalRules.sourceFields || ''}
+                        onChange={(e) => setStatisticalRules({...statisticalRules, sourceFields: e.target.value})}
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        placeholder="field1, field2, field3"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Enter the item IDs that this function should operate on</p>
+                    </div>
+
+                    {(statisticalRules.function === 'percentage' || statisticalRules.function === 'ratio') && (
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Pattern (Regex)</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Reference Field (denominator)</label>
                         <input
                           type="text"
-                          value={basicRules.pattern || ''}
-                          onChange={(e) => setBasicRules({...basicRules, pattern: e.target.value})}
+                          value={statisticalRules.referenceField || ''}
+                          onChange={(e) => setStatisticalRules({...statisticalRules, referenceField: e.target.value})}
                           className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          placeholder="^[A-Z0-9]+$"
+                          placeholder="total_field"
                         />
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={basicRules.email || false}
-                            onChange={(e) => setBasicRules({...basicRules, email: e.target.checked})}
-                            className="mr-2"
-                          />
-                          <span className="text-xs">Email Format</span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={basicRules.numeric || false}
-                            onChange={(e) => setBasicRules({...basicRules, numeric: e.target.checked})}
-                            className="mr-2"
-                          />
-                          <span className="text-xs">Numeric Only</span>
-                        </label>
+                    )}
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Expected Min Result</label>
+                        <input
+                          type="number"
+                          value={statisticalRules.expectedMin || ''}
+                          onChange={(e) => setStatisticalRules({...statisticalRules, expectedMin: e.target.value ? parseFloat(e.target.value) : undefined})}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Expected Max Result</label>
+                        <input
+                          type="number"
+                          value={statisticalRules.expectedMax || ''}
+                          onChange={(e) => setStatisticalRules({...statisticalRules, expectedMax: e.target.value ? parseFloat(e.target.value) : undefined})}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        />
                       </div>
                     </div>
-                  )}
 
-                  {/* Statistical Functions */}
-                  {validationRuleType === 'statistical' && (
-                    <div className="space-y-3 p-3 bg-blue-50 rounded-md">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={statisticalRules.autoCalculate || false}
+                        onChange={(e) => setStatisticalRules({...statisticalRules, autoCalculate: e.target.checked})}
+                        className="mr-2"
+                      />
+                      <span className="text-xs">Auto-calculate and populate field</span>
+                    </div>
+
+                    <div className="bg-blue-100 p-2 rounded text-xs text-blue-800">
+                      <strong>Function Preview:</strong> {statisticalRules.function ? 
+                        `${statisticalRules.function.toUpperCase()}(${statisticalRules.sourceFields || 'source_fields'})${
+                          statisticalRules.referenceField ? ` / ${statisticalRules.referenceField}` : ''
+                        }` : 'Select a function to see preview'
+                      }
+                    </div>
+                  </div>
+                )}
+
+                {/* Custom Rules */}
+                {validationRuleType === 'custom' && (
+                  <div className="space-y-3 p-3 bg-green-50 rounded-md">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Custom Rule Name</label>
+                      <input
+                        type="text"
+                        value={customRules.ruleName || ''}
+                        onChange={(e) => setCustomRules({...customRules, ruleName: e.target.value})}
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        placeholder="e.g., GSTIN_Validation, Revenue_Check"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Rule Type</label>
+                      <select
+                        value={customRules.ruleType || ''}
+                        onChange={(e) => setCustomRules({...customRules, ruleType: e.target.value})}
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                      >
+                        <option value="">Select Rule Type</option>
+                        <option value="conditional">Conditional Logic</option>
+                        <option value="cross_field">Cross-Field Validation</option>
+                        <option value="business_logic">Business Logic</option>
+                        <option value="data_consistency">Data Consistency</option>
+                        <option value="format_validation">Format Validation</option>
+                        <option value="range_check">Range Check</option>
+                        <option value="dependency">Field Dependency</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Rule Expression</label>
+                      <textarea
+                        value={customRules.expression || ''}
+                        onChange={(e) => setCustomRules({...customRules, expression: e.target.value})}
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        rows={3}
+                        placeholder="e.g., IF(field1 > 0, field2 > field1 * 0.1, true)"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Use field IDs and logical operators</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Error Message</label>
+                      <input
+                        type="text"
+                        value={customRules.errorMessage || ''}
+                        onChange={(e) => setCustomRules({...customRules, errorMessage: e.target.value})}
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        placeholder="Custom error message for validation failure"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Dependent Fields (comma-separated)</label>
+                      <input
+                        type="text"
+                        value={customRules.dependentFields || ''}
+                        onChange={(e) => setCustomRules({...customRules, dependentFields: e.target.value})}
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                        placeholder="field1, field2"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Fields that trigger this validation</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Statistical Function</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Severity</label>
                         <select
-                          value={statisticalRules.function || ''}
-                          onChange={(e) => setStatisticalRules({...statisticalRules, function: e.target.value})}
+                          value={customRules.severity || 'error'}
+                          onChange={(e) => setCustomRules({...customRules, severity: e.target.value})}
                           className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                         >
-                          <option value="">Select Function</option>
-                          <option value="sum">SUM - Calculate total of values</option>
-                          <option value="average">AVERAGE - Calculate mean value</option>
-                          <option value="count">COUNT - Count non-empty values</option>
-                          <option value="min">MIN - Find minimum value</option>
-                          <option value="max">MAX - Find maximum value</option>
-                          <option value="median">MEDIAN - Find middle value</option>
-                          <option value="mode">MODE - Find most frequent value</option>
-                          <option value="variance">VARIANCE - Calculate variance</option>
-                          <option value="stddev">STANDARD DEVIATION - Calculate std deviation</option>
-                          <option value="percentage">PERCENTAGE - Calculate percentage</option>
-                          <option value="ratio">RATIO - Calculate ratio between fields</option>
-                          <option value="growth_rate">GROWTH RATE - Calculate growth percentage</option>
+                          <option value="error">Error (Blocks submission)</option>
+                          <option value="warning">Warning (Shows alert)</option>
+                          <option value="info">Info (Shows information)</option>
                         </select>
                       </div>
-                      
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Source Fields (comma-separated item IDs)</label>
-                        <input
-                          type="text"
-                          value={statisticalRules.sourceFields || ''}
-                          onChange={(e) => setStatisticalRules({...statisticalRules, sourceFields: e.target.value})}
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          placeholder="field1, field2, field3"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Enter the item IDs that this function should operate on</p>
-                      </div>
-
-                      {(statisticalRules.function === 'percentage' || statisticalRules.function === 'ratio') && (
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Reference Field (denominator)</label>
-                          <input
-                            type="text"
-                            value={statisticalRules.referenceField || ''}
-                            onChange={(e) => setStatisticalRules({...statisticalRules, referenceField: e.target.value})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                            placeholder="total_field"
-                          />
-                        </div>
-                      )}
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Expected Min Result</label>
-                          <input
-                            type="number"
-                            value={statisticalRules.expectedMin || ''}
-                            onChange={(e) => setStatisticalRules({...statisticalRules, expectedMin: e.target.value ? parseFloat(e.target.value) : undefined})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Expected Max Result</label>
-                          <input
-                            type="number"
-                            value={statisticalRules.expectedMax || ''}
-                            onChange={(e) => setStatisticalRules({...statisticalRules, expectedMax: e.target.value ? parseFloat(e.target.value) : undefined})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={statisticalRules.autoCalculate || false}
-                          onChange={(e) => setStatisticalRules({...statisticalRules, autoCalculate: e.target.checked})}
-                          className="mr-2"
-                        />
-                        <span className="text-xs">Auto-calculate and populate field</span>
-                      </div>
-
-                      <div className="bg-blue-100 p-2 rounded text-xs text-blue-800">
-                        <strong>Function Preview:</strong> {statisticalRules.function ? 
-                          `${statisticalRules.function.toUpperCase()}(${statisticalRules.sourceFields || 'source_fields'})${
-                            statisticalRules.referenceField ? ` / ${statisticalRules.referenceField}` : ''
-                          }` : 'Select a function to see preview'
-                        }
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Custom Rules */}
-                  {validationRuleType === 'custom' && (
-                    <div className="space-y-3 p-3 bg-green-50 rounded-md">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Custom Rule Name</label>
-                        <input
-                          type="text"
-                          value={customRules.ruleName || ''}
-                          onChange={(e) => setCustomRules({...customRules, ruleName: e.target.value})}
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          placeholder="e.g., GSTIN_Validation, Revenue_Check"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Rule Type</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Trigger Event</label>
                         <select
-                          value={customRules.ruleType || ''}
-                          onChange={(e) => setCustomRules({...customRules, ruleType: e.target.value})}
+                          value={customRules.triggerEvent || 'onChange'}
+                          onChange={(e) => setCustomRules({...customRules, triggerEvent: e.target.value})}
                           className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                         >
-                          <option value="">Select Rule Type</option>
-                          <option value="conditional">Conditional Logic</option>
-                          <option value="cross_field">Cross-Field Validation</option>
-                          <option value="business_logic">Business Logic</option>
-                          <option value="data_consistency">Data Consistency</option>
-                          <option value="format_validation">Format Validation</option>
-                          <option value="range_check">Range Check</option>
-                          <option value="dependency">Field Dependency</option>
+                          <option value="onChange">On Change</option>
+                          <option value="onBlur">On Blur</option>
+                          <option value="onSubmit">On Submit</option>
+                          <option value="onSave">On Save</option>
                         </select>
                       </div>
-
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Rule Expression</label>
-                        <textarea
-                          value={customRules.expression || ''}
-                          onChange={(e) => setCustomRules({...customRules, expression: e.target.value})}
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          rows={3}
-                          placeholder="e.g., IF(field1 > 0, field2 > field1 * 0.1, true)"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Use field IDs and logical operators</p>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Error Message</label>
-                        <input
-                          type="text"
-                          value={customRules.errorMessage || ''}
-                          onChange={(e) => setCustomRules({...customRules, errorMessage: e.target.value})}
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          placeholder="Custom error message for validation failure"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Dependent Fields (comma-separated)</label>
-                        <input
-                          type="text"
-                          value={customRules.dependentFields || ''}
-                          onChange={(e) => setCustomRules({...customRules, dependentFields: e.target.value})}
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          placeholder="field1, field2"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Fields that trigger this validation</p>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Severity</label>
-                          <select
-                            value={customRules.severity || 'error'}
-                            onChange={(e) => setCustomRules({...customRules, severity: e.target.value})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          >
-                            <option value="error">Error (Blocks submission)</option>
-                            <option value="warning">Warning (Shows alert)</option>
-                            <option value="info">Info (Shows information)</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">Trigger Event</label>
-                          <select
-                            value={customRules.triggerEvent || 'onChange'}
-                            onChange={(e) => setCustomRules({...customRules, triggerEvent: e.target.value})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          >
-                            <option value="onChange">On Change</option>
-                            <option value="onBlur">On Blur</option>
-                            <option value="onSubmit">On Submit</option>
-                            <option value="onSave">On Save</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={customRules.isActive || false}
-                          onChange={(e) => setCustomRules({...customRules, isActive: e.target.checked})}
-                          className="mr-2"
-                        />
-                        <span className="text-xs">Active Rule</span>
-                      </div>
                     </div>
-                  )}
 
-                  {/* Apply Rules Button */}
-                  <button
-                    onClick={applyValidationRules}
-                    className="w-full mt-2 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                  >
-                    Apply Validation Rules
-                  </button>
-
-                  {/* Current Rules Preview */}
-                  {Object.keys(newItem.validationRules).length > 0 && (
-                    <div className="mt-3 p-2 bg-gray-100 rounded">
-                      <h6 className="text-xs font-medium text-gray-700 mb-1">Current Rules:</h6>
-                      <pre className="text-xs text-gray-600 whitespace-pre-wrap">
-                        {JSON.stringify(newItem.validationRules, null, 2)}
-                      </pre>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={customRules.isActive || false}
+                        onChange={(e) => setCustomRules({...customRules, isActive: e.target.checked})}
+                        className="mr-2"
+                      />
+                      <span className="text-xs">Active Rule</span>
                     </div>
-                  )}
+                  </div>
+                )}
+
+                {/* Apply Rules Button */}
+                <button
+                  onClick={applyValidationRules}
+                  className="w-full mt-2 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                >
+                  Apply Validation Rules
+                </button>
+
+                {/* Current Rules Preview */}
+                {Object.keys(newItem.validationRules).length > 0 && (
+                  <div className="mt-3 p-2 bg-gray-100 rounded">
+                    <h6 className="text-xs font-medium text-gray-700 mb-1">Current Rules:</h6>
+                    <pre className="text-xs text-gray-600 whitespace-pre-wrap">
+                      {JSON.stringify(newItem.validationRules, null, 2)}
+                    </pre>
+                  </div>
+                )}
+
+                {/* Custom Validation Rule Input */}
+                <div className="space-y-2">
+                  <textarea
+                    value={customValidationRule}
+                    onChange={(e) => setCustomValidationRule(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                    placeholder='{"min": 0, "max": 100}'
+                  />
                   <button
                     onClick={handleAddValidationRule}
                     disabled={!customValidationRule.trim()}
@@ -2079,27 +2095,27 @@ const SurveyConfiguration: React.FC = () => {
                     Add Validation Rule
                   </button>
                 </div>
-                
-                {/* Current Validation Rules */}
-                {Object.keys(newItem.validationRules).length > 0 && (
-                  <div className="bg-purple-50 border border-purple-200 rounded p-3">
-                    <h6 className="text-sm font-medium text-purple-900 mb-2">Current Validation Rules:</h6>
-                    <pre className="text-xs text-purple-800 whitespace-pre-wrap">
-                      {JSON.stringify(newItem.validationRules, null, 2)}
-                    </pre>
-                  </div>
-                )}
+              </div>
+              
+              {/* Current Validation Rules */}
+              {Object.keys(newItem.validationRules).length > 0 && (
+                <div className="bg-purple-50 border border-purple-200 rounded p-3">
+                  <h6 className="text-sm font-medium text-purple-900 mb-2">Current Validation Rules:</h6>
+                  <pre className="text-xs text-purple-800 whitespace-pre-wrap">
+                    {JSON.stringify(newItem.validationRules, null, 2)}
+                  </pre>
+                </div>
+              )}
 
-                {/* Common Validation Examples */}
-                {/* Validation Examples */}
-                <div className="bg-gray-50 p-3 rounded-md">
-                  <h6 className="text-sm font-medium text-gray-900 mb-2">Validation Examples:</h6>
-                  <div className="space-y-2 text-xs text-gray-600">
-                    <div className="grid grid-cols-1 gap-1">
-                      <div><strong>Basic:</strong> Min/Max values, Length limits, Email format</div>
-                      <div><strong>Statistical:</strong> SUM(revenue_items), AVERAGE(employee_salaries)</div>
-                      <div><strong>Custom:</strong> IF(total_employees > 50, annual_revenue > 1000000, true)</div>
-                    </div>
+              {/* Common Validation Examples */}
+              {/* Validation Examples */}
+              <div className="bg-gray-50 p-3 rounded-md">
+                <h6 className="text-sm font-medium text-gray-900 mb-2">Validation Examples:</h6>
+                <div className="space-y-2 text-xs text-gray-600">
+                  <div className="grid grid-cols-1 gap-1">
+                    <div><strong>Basic:</strong> Min/Max values, Length limits, Email format</div>
+                    <div><strong>Statistical:</strong> SUM(revenue_items), AVERAGE(employee_salaries)</div>
+                    <div><strong>Custom:</strong> IF(total_employees > 50, annual_revenue > 1000000, true)</div>
                   </div>
                 </div>
               </div>
@@ -2108,24 +2124,19 @@ const SurveyConfiguration: React.FC = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowItemModal(false)}
-            <>
-              <div className="mt-6 flex justify-end space-x-3">
-                <button
-                  onClick={() => setShowItemModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleAddItem}
-                  disabled={!newItem.itemId || !newItem.itemName || !newItem.dataType}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
-                >
-                  <Save size={16} />
-                  <span>Add Item</span>
-                </button>
-              </div>
-            </>
+                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddItem}
+                disabled={!newItem.itemId || !newItem.itemName || !newItem.dataType}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                <Save size={16} />
+                <span>Add Item</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
