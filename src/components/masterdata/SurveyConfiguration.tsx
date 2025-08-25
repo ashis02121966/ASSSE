@@ -1501,6 +1501,20 @@ const SurveyConfiguration: React.FC = () => {
                               <span className="text-sm font-medium text-gray-900">{item.itemName}</span>
                               {item.isRequired && <span className="text-red-500 ml-1">*</span>}
                               <div className="text-xs text-gray-500">ID: {item.itemId}</div>
+                              <div className="text-xs text-gray-500">
+                                <div><strong>Data Type:</strong> {item.dataType}</div>
+                                <div><strong>Required:</strong> {item.isRequired ? 'Yes' : 'No'}</div>
+                                {item.validationRules && Object.keys(item.validationRules).length > 0 && (
+                                  <div><strong>Validation:</strong> {
+                                    item.validationRules.type === 'statistical' ? `${item.validationRules.function?.toUpperCase()} function` :
+                                    item.validationRules.type === 'custom' ? `Custom: ${item.validationRules.ruleName}` :
+                                    'Basic rules'
+                                  }</div>
+                                )}
+                                {item.options && item.options.length > 0 && (
+                                  <div><strong>Options:</strong> {item.options.join(', ')}</div>
+                                )}
+                              </div>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
